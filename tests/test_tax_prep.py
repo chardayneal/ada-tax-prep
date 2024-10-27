@@ -1,3 +1,7 @@
+import pytest
+from ada_tax_prep.income_tax import (
+    calculate_tax_2020, calculate_deducted_income_2020
+)
 from ada_tax_prep.income_tax import (
     calculate_tax_2020
 )
@@ -100,3 +104,59 @@ def test_big_bracket_last():
     taxes = calculate_tax_2020(income)
 
     assert taxes == 988 + 3630 + 9988 + 18666 + 14096 + 108868 + 178192
+
+@pytest.fixture
+def all_valid_deductions():
+    return {
+        "charity": 5000,
+        "mortgage": 5000,
+        "child": 5000,
+        "tuition": 5000,
+        "healthcare": 5000
+    }    
+
+@pytest.fixture
+def some_invalid_deductions():
+    return {
+        "charity": 5000,
+        "mortgage": 5000,
+        "child": 5000,
+        "invalid": 5000,
+        "not_allowed": 5000
+    }    
+
+@pytest.fixture
+def few_valid_deductions():
+    return {
+        "charity": 5000,
+        "mortgage": 5000,
+        "child": 5000
+    }    
+
+def test_deducted_income_cannot_fall_below_zero():
+    income = 10000
+
+    deducted_income = calculate_deducted_income_2020(income, {})
+
+    assert deducted_income == 0
+
+def test_applies_standard_deduction():
+    income = 50000
+
+    deducted_income = calculate_deducted_income_2020(income, {})
+
+    assert deducted_income == 40000
+
+def test_applies_itemized_deductions(all_valid_deductions):
+    income = 50000
+
+    deducted_income = calculate_deducted_income_2020(income, all_valid_deductions)
+
+    assert deducted_income == 25000
+
+def test_ignores_invalid_itemized_deductions(some_invalid_deductions):
+    income = 50000
+
+    deducted_income = calculate_deducted_income_2020(income, some_invalid_deductions)
+
+    assert deducted_income == 35000

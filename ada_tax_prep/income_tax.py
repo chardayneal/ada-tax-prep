@@ -31,3 +31,32 @@ def calculate_tax_by_bracket(income, brackets):
     return total_tax
 def calculate_tax_2020(income):
     return calculate_tax_by_bracket(income, TAX_BRACKETS_2020)
+
+DEDUCTION_CATEGORIES = (
+    "charity",
+    "mortgage",
+    "child",
+    "tuition",
+    "healthcare"
+)
+
+STANDARD_DEDUCTION_2020 = 10000
+
+def calculate_deducted_income(income, deductions, standard_deduction):
+    summed_deductions = sum((
+        deductions.get(category, 0)
+        for category in DEDUCTION_CATEGORIES
+    ))
+
+    total_deductions = (
+        standard_deduction
+            if standard_deduction > summed_deductions
+            else summed_deductions
+    )
+
+    adjusted_income = income - total_deductions
+
+    return adjusted_income if adjusted_income > 0 else 0
+
+def calculate_deducted_income_2020(income, deductions):
+    return calculate_deducted_income(income, deductions, STANDARD_DEDUCTION_2020)
