@@ -142,7 +142,7 @@ def test_applies_standard_deduction():
 
     deducted_income = calculate_deducted_income_2020(income, {})
 
-    assert deducted_income == 40000
+    assert deducted_income == 37600
 
 def test_applies_itemized_deductions(all_valid_deductions):
     income = 50000
