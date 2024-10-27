@@ -1,9 +1,6 @@
 import pytest
 from ada_tax_prep.income_tax import (
-    calculate_tax_2020, calculate_deducted_income_2020
-)
-from ada_tax_prep.income_tax import (
-    calculate_tax_2020
+    calculate_tax_2020, calculate_deducted_income_2020, calculate_tax_liability_2020
 )
 
 def test_no_income():
@@ -160,3 +157,10 @@ def test_ignores_invalid_itemized_deductions(some_invalid_deductions):
     deducted_income = calculate_deducted_income_2020(income, some_invalid_deductions)
 
     assert deducted_income == 35000
+
+def test_calculate_adjusted_income_tax_burden(all_valid_deductions):
+    income = 50000
+
+    adjusted_income_tax = calculate_tax_liability_2020(income, all_valid_deductions)
+
+    assert adjusted_income_tax == 988 + 1815
